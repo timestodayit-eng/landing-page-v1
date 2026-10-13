@@ -1,0 +1,3 @@
+import { notFound } from 'next/navigation';import { getDb } from '../../../lib/db';import { safeJson } from '../../../lib/content';import BlockRenderer from '../../../components/BlockRenderer';
+export const dynamic='force-dynamic';
+export default async function PublicPage({params}){const db=getDb();const [rows]=await db.query("SELECT title,blocks_json FROM pages WHERE slug=? AND status='published' LIMIT 1",[params.slug]);const page=rows[0];if(!page)return notFound();const blocks=safeJson(page.blocks_json,[]);return <main className="public-page">{blocks.map((b,i)=><BlockRenderer key={b.id||i} block={b}/>)}<div className="footerbar">Powered by Landing CMS Pro</div></main>}
